@@ -3,29 +3,41 @@ import * as SQLite from 'expo-sqlite';
 const db = SQLite.openDatabaseSync('recipes.db');
 
 export const initDatabase = () => {
-  // TODO: Implement database initialization
+  db.execSync(`
+    CREATE TABLE IF NOT EXISTS recipes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      ingredients TEXT NOT NULL,
+      instructions TEXT NOT NULL,
+      image TEXT
+    );
+  `);
 };
 
-export const insertRecipe = () => {
-  // TODO: Implement insert recipe
+export const insertRecipe = (name, ingredients, instructions, image) => {
+  return db.runSync(
+    'INSERT INTO recipes (name, ingredients, instructions, image) VALUES (?, ?, ?, ?)',
+    [name, ingredients, instructions, image || '']
+  );
 };
 
 export const getAllRecipes = () => {
-  // TODO: Implement get all recipes
+  return db.getAllSync('SELECT * FROM recipes ORDER BY id DESC');
 };
 
 export const getRecipeById = (id) => {
-  // TODO: Implement get recipe by ID
+  return db.getFirstSync('SELECT * FROM recipes WHERE id = ?', [id]);
 };
 
-export const updateRecipe = () => {
-  // TODO: Implement update recipe
+export const updateRecipe = (id, name, ingredients, instructions, image) => {
+  return db.runSync(
+    'UPDATE recipes SET name = ?, ingredients = ?, instructions = ?, image = ? WHERE id = ?',
+    [name, ingredients, instructions, image || '', id]
+  );
 };
 
 export const deleteRecipe = (id) => {
-  // TODO: Implement delete recipe
+  return db.runSync('DELETE FROM recipes WHERE id = ?', [id]);
 };
 
-
-// Export the database instance for advanced usage
 export default db;
